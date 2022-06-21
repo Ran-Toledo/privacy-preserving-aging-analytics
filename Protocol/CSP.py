@@ -22,8 +22,8 @@ FORMAT = 'utf-8'
 DISCONNECT_MESSAGE = "!DISCONNECT"
 
 
-CSPserver = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-CSPserver.bind(ADDR)
+MyCSP = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+MyCSP.bind(ADDR)
 
 
 def handle_client(conn, addr):
@@ -45,10 +45,10 @@ def handle_client(conn, addr):
 
 
 def start():
-    CSPserver.listen()
+    MyCSP.listen()
     print(f"[LISTENING] Server is listening on {SERVER}")
     while True:
-        conn, addr = CSPserver.accept()
+        conn, addr = MyCSP.accept()
         conn.send("Connection established.".encode(FORMAT))
         thread = threading.Thread(target=handle_client, args=(conn, addr))
         thread.start()

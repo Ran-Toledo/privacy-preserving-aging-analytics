@@ -18,8 +18,8 @@ DISCONNECT_MESSAGE = "!DISCONNECT"
 SERVER = socket.gethostname()
 ADDR = (SERVER, PORT)
 
-MLEserver = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-MLEserver.connect(ADDR)
+MyMLE = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+MyMLE.connect(ADDR)
 
 
 def send(msg):
@@ -27,12 +27,12 @@ def send(msg):
     msg_length = len(message)
     send_length = str(msg_length).encode(FORMAT)
     send_length += b' ' * (HEADER - len(send_length))
-    MLEserver.send(send_length)
-    MLEserver.send(message)
-    msg = MLEserver.recv(2048).decode(FORMAT)
+    MyMLE.send(send_length)
+    MyMLE.send(message)
+    msg = MyMLE.recv(2048).decode(FORMAT)
     print(f"[CSP] {msg}")
 
 
 while True:
-    msg = MLEserver.recv(2048).decode(FORMAT)
+    msg = MyMLE.recv(2048).decode(FORMAT)
     print(f"[CSP] {msg}")

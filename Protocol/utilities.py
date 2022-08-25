@@ -26,8 +26,7 @@ def timer(start: time, end: time) -> (int, int, int):
     return hours, minutes, seconds
 
 
-def config_logging(logger: [Logger]) -> [Logger]:
-    logging.setLoggerClass(logger)
+def config_logging() -> [Logger]:
     logging.addLevelName(CSP_LEVEL, "CSP")
     logging.addLevelName(MLE_LEVEL, "MLE")
     logging.basicConfig(

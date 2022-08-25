@@ -49,7 +49,7 @@ Phase2-B:
 if __name__ == '__main__':
 
     # Config logging
-    logger = utils.config_logging(logging.getLoggerClass())
+    logger = utils.config_logging()
     logging.setLoggerClass(logger)
 
     # Init CSP

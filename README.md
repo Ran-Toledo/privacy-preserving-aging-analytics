@@ -40,10 +40,13 @@ This project requires the installation of the following libraries, as well as nu
   ```sh
   npm install npm@latest -g
   ```
-* pip
+* phe
+  ```sh
+  pip install phe
+  ```
+* EpigeneticPacemaker
   ```sh
   pip install EpigeneticPacemaker
-  pip install phe
   ```
 
 
@@ -51,17 +54,9 @@ This project requires the installation of the following libraries, as well as nu
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
 
-Use this space to list resources you find helpful and would like to give credit to. I've included a few of my favorites to kick things off!
+Resources used in creating this project include the following:
 
-* [Choose an Open Source License](https://choosealicense.com)
-* [GitHub Emoji Cheat Sheet](https://www.webpagefx.com/tools/emoji-cheat-sheet)
-* [Malven's Flexbox Cheatsheet](https://flexbox.malven.co/)
-* [Malven's Grid Cheatsheet](https://grid.malven.co/)
-* [Img Shields](https://shields.io)
-* [GitHub Pages](https://pages.github.com)
-* [Font Awesome](https://fontawesome.com)
-* [React Icons](https://react-icons.github.io/react-icons/search)
-
+* [EPM Tutorial] (https://epigeneticpacemaker.readthedocs.io/en/latest/epm_tutorial/)
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 

@@ -30,7 +30,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![project-image]
+![project-image]
 
 There are many great README templates available on GitHub; however, I didn't find one that really suited my needs so I created this enhanced one. I want to create a README template so amazing that it'll be the last one you ever need -- I think this is it.
 
@@ -170,4 +170,4 @@ Use this space to list resources you find helpful and would like to give credit 
 
 
 <!-- MARKDOWN LINKS & IMAGES -->
-[project-image]: https://im.ge/i/OmwlhF
+[project-image]: https://i.im.ge/2022/08/26/OmwlhF.privacy-preserving-aging-analytics.png

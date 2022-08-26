@@ -1,5 +1,6 @@
 # IMPORTS
 import utilities as utils
+import data_handler
 import logging
 import time
 from csp import CSP
@@ -60,13 +61,15 @@ if __name__ == '__main__':
     MyMLE = MLE(public_key, logger)
 
     # Split dataset obtained from the Epigenetic PaceMaker module
-    data_owners = utils.split_data_to_different_owners(NUM_OF_OWNERS)
+    data_owners = data_handler.split_data_to_different_owners(NUM_OF_OWNERS)
+
+    logging.info("Splitting data complete.")
 
     # Data Encryption
     for data_owner in data_owners:
 
         # Each data owner encrypts their dataset
-        encrypted_data = utils.encrypt_data(data_owner, public_key)
+        encrypted_data = data_handler.encrypt_data(data_owner, public_key)
 
         # The encrypted dataset is sent to the MLE
         MyMLE.receive_data_from_owners(encrypted_data)
@@ -75,8 +78,6 @@ if __name__ == '__main__':
 
     # MLE merges the encrypted datasets it has received from the data owners
     MyMLE.merge_data()
-
-    logging.info("Merging data complete.")
 
     logging.info("Starting protocol.")
 

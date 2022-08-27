@@ -3,16 +3,18 @@ import utilities as utils
 import data_handler
 import logging
 import time
+import numpy as np
+import epigeneticPacemaker
 from csp import CSP
 from mle import MLE
 from site_step import site_step
 from time_step import time_step
 
+
 # CONSTANTS
 NUM_OF_OWNERS = 8
 NUM_OF_ITERATIONS = 4
-CSP_LEVEL = 8
-MLE_LEVEL = 9
+
 
 # ABSTRACT
 """
@@ -54,11 +56,11 @@ if __name__ == '__main__':
     logging.setLoggerClass(logger)
 
     # Init CSP
-    MyCSP = CSP(logger)
-    public_key = MyCSP.get_pk()
+    my_csp = CSP(logger)
+    public_key = my_csp.get_pk()
 
     # Init MLE
-    MyMLE = MLE(public_key, logger)
+    my_mle = MLE(public_key, logger)
 
     # Split dataset obtained from the Epigenetic PaceMaker module
     data_owners = data_handler.split_data_to_different_owners(NUM_OF_OWNERS)
@@ -72,12 +74,12 @@ if __name__ == '__main__':
         encrypted_data = data_handler.encrypt_data(data_owner, public_key)
 
         # The encrypted dataset is sent to the MLE
-        MyMLE.receive_data_from_owners(encrypted_data)
+        my_mle.receive_data_from_owners(encrypted_data)
 
     logging.info("Data Encryption complete.")
 
     # MLE merges the encrypted datasets it has received from the data owners
-    MyMLE.merge_data()
+    my_mle.merge_data()
 
     logging.info("Starting protocol.")
 
@@ -86,14 +88,14 @@ if __name__ == '__main__':
 
     # Protocol
     for iteration in range(NUM_OF_ITERATIONS):
-        logging.info("BEGINNING ITERATION " + str(iteration+1))
+        logging.info("STARTING ITERATION " + str(iteration+1))
 
         # Perform site step
-        site_step(MyCSP, MyMLE)
+        site_step(my_csp, my_mle)
         logging.info("SITE STEP COMPLETE")
 
         # Perform time step
-        time_step(MyCSP, MyMLE)
+        time_step(my_csp, my_mle)
         logging.info("TIME STEP COMPLETE")
 
     logging.info("Completed protocol.")
@@ -105,6 +107,11 @@ if __name__ == '__main__':
     logging.info("Runtime: " + ("{:0>2}:{:0>2}:{:05.2f}".format(int(hours), int(minutes), seconds)))
 
     # Print Results
-    original_ages = [MyCSP.decrypt(age) for age in MyMLE.get_original_ages()]
-    utils.create_graph(original_ages, MyMLE.get_predicted_ages())
+    original_ages = [my_csp.decrypt(age) for age in my_mle.get_original_ages()]
+    utils.create_graph(original_ages, my_mle.get_predicted_ages())
 
+    # Run algorithm on unencrypted dataset
+    predicted_ages = epigeneticPacemaker.main()
+    mean_error = np.mean(np.abs(predicted_ages - my_mle.get_predicted_ages()))
+
+    logging.info("Mean average error: " + str(mean_error))

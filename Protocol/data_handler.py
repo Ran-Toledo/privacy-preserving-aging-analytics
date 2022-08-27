@@ -8,7 +8,7 @@ from EpigeneticPacemaker.ExampleData.DataSets import get_example_data
 PRECISION = None
 MIN_COEFFICIENT = 0.90
 NUMBER_OF_SITES = 5
-NUMBER_OF_PEOPLE = 48
+NUMBER_OF_PEOPLE = 24
 
 
 def split_data_to_different_owners(m: int) -> np.array:

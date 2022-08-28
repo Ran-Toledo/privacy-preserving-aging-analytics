@@ -5,6 +5,8 @@ import logging
 import numpy as np
 import matplotlib.pyplot as plt
 from logging import Logger
+
+from numpy import ndarray
 from numpy.linalg import inv
 
 
@@ -97,9 +99,13 @@ def pearson_correlation(meth_matrix: np.array, phenotype: np.array) -> np.array:
     return covariance / (variance_meth * variance_phenotype)
 
 
-def create_graph(x: np.array, y: np.array, sites: int, individuals: int):
+def mean_average_error(set1: np.array, set2: np.array) -> float:
+    return np.average(np.abs(set1 - set2))
+
+
+def create_graph(x: np.array, y: np.array):
     logging.disable(logging.DEBUG)
-    plt.title("Epigenetic PaceMaker\nSites = {}, Individuals = {}".format(str(sites), str(individuals)))
+    plt.title("Epigenetic PaceMaker")
     plt.xlabel("Chronological ages")
     plt.ylabel("Epigenetic ages")
     plt.xticks([tick for tick in range(-20, 100, 5)])

@@ -1,13 +1,13 @@
-# import the data retrieval class
-from EpigeneticPacemaker.ExampleData.DataSets import get_example_data
-from typing import Dict, Tuple
-import numpy as np
-import scipy.stats
-import matplotlib.pyplot as plt
-from scipy import stats
+# IMPORTS
 import math
-# from scipy.stats import chi2_contingency
-import subprocess
+import numpy as np
+import matplotlib.pyplot as plt
+import utilities as utils
+from scipy import stats
+from EpigeneticPacemaker.ExampleData.DataSets import get_example_data
+
+
+#   <----- UNENCRYPTED CEM-UPM ALGORITHM ----->
 
 
 # clear from data variables correspond to small ages
@@ -27,7 +27,7 @@ def clear_data_by_ages(ages, methylation_values, limit):
 def pearson_correlation(ages, methylation_values):
     p_values = []
     for x in range(len(methylation_values)):
-        p_values.append(abs(scipy.stats.pearsonr(methylation_values[x], ages)[0]))
+        p_values.append(abs(stats.pearsonr(methylation_values[x], ages)[0]))
     return p_values
 
 
@@ -79,13 +79,13 @@ def calculate_rates_and_start_states_naive(ages, sites, n):
     f.close()
     # create X^T
     matrix_transpose = np.array(matrix).transpose()
-    # multipe X^T *X
+    # multipy X^T *X
     mul = np.matmul(matrix_transpose, np.array(matrix))
     # get matrix inverse ((X^T *X)^−1)
     inverse = np.linalg.inv(mul)
-    # multiple [(X^T *X)^−1] and  [X^T]
+    # multiply [(X^T *X)^−1] and  [X^T]
     mul = np.matmul(inverse, matrix_transpose)
-    # multiple the result by vector y
+    # multiply the result by vector y
     result = np.matmul(mul, np.array(sites))
     ri = []
     s0i = []
@@ -181,35 +181,6 @@ def EPM(S, y, tj, delta, n):
     return ri, s0i, tj, RSS1, m
 
 
-# create scatter graph
-def create_graph(x, y):
-    plt.scatter(x, y, color="blue", s=10)
-    xval = min(x)
-    yval = min(y)
-    # xticks with jumps of 5, add 0 val, max and min vals
-    xaxes = []
-    # yticks with jumps of 5, add 0 val, max and min vals
-    yaxes = []
-    while (xval < max(x)):
-        xaxes.append(xval)
-        xval += 5
-    if (0 not in xaxes):
-        xaxes.append(0)
-    xaxes.append(max(x))
-    while (yval < max(y)):
-        yaxes.append(yval)
-        yval += 5
-    if (0 not in yaxes):
-        yaxes.append(0)
-    yaxes.append(max(y))
-    plt.yticks(yaxes)
-    plt.xticks(xaxes, rotation='vertical')
-    plt.xlabel("chronological ages")
-    plt.ylabel("epigenetic ages")
-    plt.gca().xaxis.grid(True)
-    plt.gca().yaxis.grid(True)
-    plt.show()
-
 
 # calculate chi square and p value
 def chi_square(num_individuals, num_sites, val1, val2):
@@ -257,7 +228,7 @@ def graph_ratio_ages(e_age, c_age):
     plt.show()
 
 
-if __name__ == '__main__':
+def run_unencrypted_epm():
     # retrieve the training and testing data
     data1, data2 = get_example_data()
     # unpack the training and testing data
@@ -270,16 +241,17 @@ if __name__ == '__main__':
     # get the absolute value of the correlation coefficient
     pearson = np.array(pearson_correlation(ages, methylation_values))
     # return list of site indices with a high absolute correlation coefficient
-    sites = np.where(pearson > .85)[0]
-    print("the number of individuals is : ", str(len(ages)))
-    print("the number of sites is : ", str(len(sites)))
+    sites = np.where(pearson > .90)[0]
+    # print("the number of individuals is : ", str(len(ages)))
+    # print("the number of sites is : ", str(len(sites)))
     # creat S matrix :
     S = methylation_values[sites]
     # creat y vector :
     y = create_y_vector(S)
     # run EPM algorithm
     ri, s0i, tj, RSS, m = EPM(S, y, ages, 0.00001, 1000)
-    print("number of iterrations is: ", str(m))
-    create_graph(ages, tj)
+    # print("number of iterations is: ", str(m))
+    utils.create_graph(ages, tj)
+    return tj
 
 

@@ -3,8 +3,7 @@ import utilities as utils
 import data_handler
 import logging
 import time
-# import numpy as np
-# import epigeneticPacemaker
+import epigenetic_pacemaker
 from csp import CSP
 from mle import MLE
 from site_step import site_step
@@ -12,8 +11,8 @@ from time_step import time_step
 
 
 # CONSTANTS
-NUM_OF_OWNERS = 8
-NUM_OF_ITERATIONS = 4
+NUM_OF_OWNERS = 1
+NUM_OF_ITERATIONS = 2
 
 
 # ABSTRACT
@@ -105,10 +104,10 @@ if __name__ == '__main__':
 
     # Print Results
     original_ages = [my_csp.decrypt(age) for age in my_mle.get_original_ages()]
-    utils.create_graph(original_ages, my_mle.get_predicted_ages(), data_handler.NUMBER_OF_SITES, data_handler.NUMBER_OF_PEOPLE)
+    utils.create_graph(original_ages, my_mle.get_predicted_ages())
 
     # Run algorithm on unencrypted dataset
-    # predicted_ages = epigeneticPacemaker.main()
-    # mean_error = np.mean(np.abs(predicted_ages - my_mle.get_predicted_ages()))
+    predicted_ages = epigenetic_pacemaker.run_unencrypted_epm()
+    mean_error = utils.mean_average_error(predicted_ages, my_mle.get_predicted_ages())
 
-    # logging.info("Mean average error: " + str(mean_error))
+    logging.info("Mean average error: " + str(mean_error))

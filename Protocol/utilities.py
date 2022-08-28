@@ -6,7 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from logging import Logger
 from numpy.linalg import inv
-from scipy import stats
+
 
 # CONSTANTS
 MIN_VALUE = 1
@@ -97,17 +97,14 @@ def pearson_correlation(meth_matrix: np.array, phenotype: np.array) -> np.array:
     return covariance / (variance_meth * variance_phenotype)
 
 
-def create_graph(x, y):
+def create_graph(x: np.array, y: np.array, sites: int, individuals: int):
     logging.disable(logging.DEBUG)
-    plt.scatter(x, y, color="green", s=15)
+    plt.title("Epigenetic PaceMaker\nSites = {}, Individuals = {}".format(str(sites), str(individuals)))
     plt.xlabel("Chronological ages")
     plt.ylabel("Epigenetic ages")
+    plt.xticks([tick for tick in range(-20, 100, 5)])
+    plt.yticks([tick for tick in range(-20, 100, 5)])
     plt.gca().xaxis.grid(True)
     plt.gca().yaxis.grid(True)
-    res = stats.linregress(x, y)
-    plt.plot(np.array(x), res.intercept + res.slope * np.array(x), 'b', label=f"R-squared: {res.rvalue ** 2:.6f}")
-    # z = np.polyfit(np.array(x).flatten(), np.array(y).flatten(), 1)
-    # plt.title("y=%.6fx+%.6f"%(z[0],z[1]))
-    plt.title("Epigenetic PaceMaker")
-    plt.legend()
+    plt.scatter(x, y, color="blue", s=5)
     plt.show()

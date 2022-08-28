@@ -91,10 +91,11 @@ class MLE:
                 row_index += 1
 
         # Defining y vector
-        for meth_site in self.all_meth_values:
-            for gsm_value in meth_site:
-                self.y.append(gsm_value)
-        self.y = np.array(self.y, dtype=object)
+        if not len(self.y):
+            for meth_site in self.all_meth_values:
+                for gsm_value in meth_site:
+                    self.y.append(gsm_value)
+            self.y = np.array(self.y, dtype=object)
 
         logging.log(MLE_LEVEL, "Creating X and y complete.")
 
@@ -148,7 +149,6 @@ class MLE:
 
     def reset_variables(self):
         self.X = []                 # reset X
-        self.y = []                 # reset y
         self.C = []                 # reset C
         self.d = []                 # reset d
         self.__t = []               # reset t

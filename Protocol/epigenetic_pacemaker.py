@@ -1,20 +1,33 @@
-# IMPORTS
-import math
-import numpy as np
-import matplotlib.pyplot as plt
-import utilities as utils
-from scipy import stats
+# import the data retrieval class
 from EpigeneticPacemaker.ExampleData.DataSets import get_example_data
+from typing import Dict, Tuple
+import numpy as np
+import scipy.stats
+import matplotlib.pyplot as plt
+from scipy import stats
+import math
+# from scipy.stats import chi2_contingency
+import subprocess
+import numpy as np
+import time
+import utilities as utils
 
 
-#   <----- UNENCRYPTED CEM-UPM ALGORITHM ----->
+# -------------------------------------------------------------------------unused
+# create S' entries for sites with high Pearson correaltion
+def Create_S_matrix(training_sites, test_methylation_values):
+    sites = []
+    for x in range(len(training_sites)):
+        sites.append(test_methylation_values[training_sites[x]])  # entry Si,j
+    return sites
 
 
+# ----------------------------------------------------------------------------------------
 # clear from data variables correspond to small ages
-def clear_data_by_ages(ages, methylation_values, limit):
+def Clear_data_by_ages(ages, methylation_values, limit):
     x = 0
     while x < len(ages):
-        if ages[x] < limit:
+        if (ages[x] < limit):
             # delete age and site values related to it
             methylation_values = np.delete(methylation_values, x, axis=1)
             ages = np.delete(ages, x)
@@ -23,26 +36,27 @@ def clear_data_by_ages(ages, methylation_values, limit):
     return ages, methylation_values
 
 
-# func for calculating absolute Pearson correlation
+# func for calculating absolute Pearson correaltion
 def pearson_correlation(ages, methylation_values):
     p_values = []
     for x in range(len(methylation_values)):
-        p_values.append(abs(stats.pearsonr(methylation_values[x], ages)[0]))
+        p_values.append(abs(scipy.stats.pearsonr(methylation_values[x], ages)[0]))
     return p_values
 
 
 # create y vector for sites with high Pearson correaltion
-def create_y_vector(s):
+def Create_Y_vector(S):
     y = []
-    for i in range(len(s)):
-        for j in range(len(s[i])):
-            y.append(s[i][j])  # entry Si,j
+    for i in range(len(S)):
+        for j in range(len(S[i])):
+            y.append(S[i][j])  # entry Si,j
     return y
 
 
 # Naive func for calculating rates and start states(βˆ = (X^T *X)^−1 * X^T*y)
 # gets : ages (X matrix), sites (y vecrtor), n (the number of sites)
-def calculate_rates_and_start_states_naive(ages, sites, n):
+def calculate_rates_and_startStates_Naive(ages, sites, n):
+    # create matrix X
     m = len(ages)
     matrix = []
     # create matrix X
@@ -68,24 +82,15 @@ def calculate_rates_and_start_states_naive(ages, sites, n):
                 row.append(0)
                 place += 1
             matrix.append(row)
-    mat = []
-    for x in range(len(matrix)):
-        temp = []
-        for y in range(len(matrix[0])):
-            temp.append(matrix[x][y])
-        mat.append(temp)
-    f = open("demofile2.txt", "w")
-    f.write(str(mat))
-    f.close()
-    # create X^T
+            # create X^T
     matrix_transpose = np.array(matrix).transpose()
-    # multipy X^T *X
+    # multipe X^T *X
     mul = np.matmul(matrix_transpose, np.array(matrix))
     # get matrix inverse ((X^T *X)^−1)
     inverse = np.linalg.inv(mul)
-    # multiply [(X^T *X)^−1] and  [X^T]
+    # multiple [(X^T *X)^−1] and  [X^T]
     mul = np.matmul(inverse, matrix_transpose)
-    # multiply the result by vector y
+    # multiple the result by vector y
     result = np.matmul(mul, np.array(sites))
     ri = []
     s0i = []
@@ -99,7 +104,7 @@ def calculate_rates_and_start_states_naive(ages, sites, n):
 
 # advanced func for calculating rates and start states(βˆ = (X^T *X)^−1 * X^T*y)
 # gets : ages and sites
-def calculate_rates_and_start_states(ages, sites):
+def calculate_rates_and_startStates(ages, sites):
     a = sum(ages)
     b = 0
     for i in range(len(ages)):
@@ -134,7 +139,7 @@ def calculate_rates_and_start_states(ages, sites):
 
 
 # calculate epigenetic ages by tj = ∑(i≤n)[ri*(si,j-s0i))]/∑(i≤n)[ri^2]
-def calculate_ages(S, s0i, ri):
+def calcultae_eAges(S, s0i, ri):
     denominator = 0
     for i in range(len(ri)):
         denominator += ri[i] * ri[i]
@@ -148,13 +153,13 @@ def calculate_ages(S, s0i, ri):
 
 
 # calculate RSS,  (RSS =∑(i≤n)∑(j≤m)((Si,j – (s0i + ritj))^2).
-def calculate_rss(s, s0i, ri, tj):
-    rss = 0
+def calculateRSS(S, s0i, ri, tj):
+    RSS = 0
     for i in range(len(ri)):
         for j in range(len(tj)):
-            temp = s[i][j] - (s0i[i] + ri[i] * tj[j])
-            rss += temp * temp
-    return rss
+            temp = S[i][j] - (s0i[i] + ri[i] * tj[j])
+            RSS += temp * temp
+    return RSS
 
 
 # EPM algorithm
@@ -162,28 +167,70 @@ def calculate_rss(s, s0i, ri, tj):
 def EPM(S, y, tj, delta, n):
     m = 2
     # first iteration
-    ri, s0i = calculate_rates_and_start_states(tj, y)
-    tj = calculate_ages(S, s0i, ri)
-    RSS0 = calculate_rss(S, s0i, ri, tj)
+    ri, s0i = calculate_rates_and_startStates(tj, y)
+    tj = calcultae_eAges(S, s0i, ri)
+    RSS0 = calculateRSS(S, s0i, ri, tj)
     if (n == 1):
         return ri, s0i, tj, RSS0
     # second iteration
-    ri, s0i = calculate_rates_and_start_states(tj, y)
-    RSS1 = calculate_rss(S, s0i, ri, tj)
-    tj = calculate_ages(S, s0i, ri)
+    ri, s0i = calculate_rates_and_startStates(tj, y)
+    RSS1 = calculateRSS(S, s0i, ri, tj)
+    print("the difference is : %.16f" % (RSS0 - RSS1))
+    tj = calcultae_eAges(S, s0i, ri)
     # rest of iterations
-    while (RSS0 - RSS1 > delta and m < n):
+    # while (RSS0 - RSS1 > delta and m < n):
+    while (m < n):
         RSS0 = RSS1
-        ri, s0i = calculate_rates_and_start_states(tj, y)
-        tj = calculate_ages(S, s0i, ri)
-        RSS1 = calculate_rss(S, s0i, ri, tj)
+        ri, s0i = calculate_rates_and_startStates(tj, y)
+        tj = calcultae_eAges(S, s0i, ri)
+        RSS1 = calculateRSS(S, s0i, ri, tj)
+        print("the difference is : %.16f" % (RSS0 - RSS1))
         m += 1
     return ri, s0i, tj, RSS1, m
 
 
+# EPM algorithm with naive implementation
+# gets S' matrix, Y vector, chronological ages - tj, delta = minimal improvement acceptable,  n = maximum number of iterations
+
+def EPM_naive(S, y, tj, delta, n):
+    m = 2
+    # first iteration
+    ri, s0i = calculate_rates_and_startStates_Naive(tj, y, len(S))
+    tj = calcultae_eAges(S, s0i, ri)
+    RSS0 = calculateRSS(S, s0i, ri, tj)
+    if (n == 1):
+        return ri, s0i, tj, RSS0
+    # second iteration
+    ri, s0i = calculate_rates_and_startStates_Naive(tj, y, len(S))
+    RSS1 = calculateRSS(S, s0i, ri, tj)
+    # print("the difference is : ", str(RSS0 - RSS1))
+    tj = calcultae_eAges(S, s0i, ri)
+    # rest of iterations
+    while ( m < n):
+        RSS0 = RSS1
+        ri, s0i = calculate_rates_and_startStates_Naive(tj, y, len(S))
+        tj = calcultae_eAges(S, s0i, ri)
+        RSS1 = calculateRSS(S, s0i, ri, tj)
+        #   print("the difference is : ", str(RSS0 - RSS1))
+        m += 1
+    return ri, s0i, tj, RSS1, m
+
+
+# create scatter graph
+def graph(x: np.array, y: np.array):
+    plt.title("Epigenetic PaceMaker")
+    plt.xlabel("Chronological ages")
+    plt.ylabel("Epigenetic ages")
+    plt.xticks([tick for tick in range(-20, 100, 5)])
+    plt.yticks([tick for tick in range(-20, 100, 5)])
+    plt.gca().xaxis.grid(True)
+    plt.gca().yaxis.grid(True)
+    plt.scatter(x, y, color="green", s=5)
+    plt.show()
+
 
 # calculate chi square and p value
-def chi_square(num_individuals, num_sites, val1, val2):
+def Chi_square(num_individuals, num_sites, val1, val2):
     # calc chi square
     chi = num_individuals * num_sites * math.log(val1 / val2)
     # calc p value, use chi value and degree of freedom
@@ -202,7 +249,7 @@ def noise(S, s0, r, t):
 
 
 # ratio between its MC to PM rate
-def graph_ratio_sites(rMC, rPM):
+def graph_Ratio_sites(rMC, rPM):
     arr = []
     s = 0
     for x in range(len(rMC)):
@@ -228,7 +275,38 @@ def graph_ratio_ages(e_age, c_age):
     plt.show()
 
 
-def run_unencrypted_epm():
+# func to compare between number of individuals to running time, solution: 1 for naive, 2 otherwise
+def checkRunningTimes (NUMBER_OF_SITES, NUMBER_OF_PEOPLE, solution):
+    # retrieve the training and testing data
+    data1, data2 = get_example_data()
+    # unpack the training and testing data
+    samples1, cpg_sites1, ages1, methylation_values1 = data1
+    samples2, cpg_sites2, ages2, methylation_values2 = data2
+    ages = np.hstack([ages1 , ages2])
+    methylation_values = np.hstack([methylation_values1 , methylation_values2])
+    # get the absolute value of the correlation coefficient
+    pearson = np.array(pearson_correlation (ages, methylation_values))
+    # return list of site indices with a high absolute correlation coefficient
+    sites = np.where(pearson > .90)[0]
+    print (len(sites))
+    sites = sites[:NUMBER_OF_SITES]
+    ages = ages[:NUMBER_OF_PEOPLE]
+    S = methylation_values[sites, :NUMBER_OF_PEOPLE]
+    print ("the number of individuals is : ", str(len(ages)))
+     #creat y vector :
+    y = Create_Y_vector(S)
+    st = time.time()
+     #run EPM algorithm
+    if(solution == 1):
+            ri, s0i,tj,RSS, m= EPM_naive(S,y, ages, 0.00001, 4)
+    else:
+            ri, s0i,tj,RSS, m= EPM(S,y, ages, 0.00001, 4)
+    et = time.time()
+    elapsed_time = (et - st)
+    print('Execution time:', elapsed_time, 'seconds')
+
+
+def createGraph(NUMBER_OF_SITES, NUMBER_OF_PEOPLE):
     # retrieve the training and testing data
     data1, data2 = get_example_data()
     # unpack the training and testing data
@@ -236,22 +314,22 @@ def run_unencrypted_epm():
     samples2, cpg_sites2, ages2, methylation_values2 = data2
     ages = np.hstack([ages1, ages2])
     methylation_values = np.hstack([methylation_values1, methylation_values2])
-    # take only peaple with age >= 0
-    # ages, methylation_values = Clear_data_by_ages (ages, methylation_values,0)
     # get the absolute value of the correlation coefficient
     pearson = np.array(pearson_correlation(ages, methylation_values))
     # return list of site indices with a high absolute correlation coefficient
     sites = np.where(pearson > .90)[0]
-    # print("the number of individuals is : ", str(len(ages)))
-    # print("the number of sites is : ", str(len(sites)))
-    # creat S matrix :
-    S = methylation_values[sites]
+    sites = sites[:NUMBER_OF_SITES]
+    ages = ages[:NUMBER_OF_PEOPLE]
+    S = methylation_values[sites, :NUMBER_OF_PEOPLE]
+    print("number of sites is: ", str(len(sites)))
+    print("number of individuals is : ", str(len(ages)))
     # creat y vector :
-    y = create_y_vector(S)
+    y = Create_Y_vector(S)
     # run EPM algorithm
-    ri, s0i, tj, RSS, m = EPM(S, y, ages, 0.00001, 1000)
-    # print("number of iterations is: ", str(m))
+    ri, s0i, tj, RSS, m = EPM(S, y, ages, 0.00000001, 4)
+    #    print (m)
     utils.create_graph(ages, tj)
+
     return tj
 
 

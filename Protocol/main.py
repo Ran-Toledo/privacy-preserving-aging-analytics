@@ -11,7 +11,7 @@ from time_step import time_step
 
 
 # CONSTANTS
-NUM_OF_OWNERS = 8
+NUM_OF_OWNERS = 5
 NUM_OF_ITERATIONS = 4
 
 
@@ -99,7 +99,7 @@ if __name__ == '__main__':
     end_time = time.time()
 
     hours, minutes, seconds = utils.timer(start_time, end_time)
-
+    logging.info("Runtime: " + str(end_time - start_time))
     logging.info("Runtime: " + ("{:0>2}:{:0>2}:{:05.2f}".format(int(hours), int(minutes), seconds)))
 
     # Print Results
@@ -107,7 +107,9 @@ if __name__ == '__main__':
     utils.create_graph(original_ages, my_mle.get_predicted_ages())
 
     # Run algorithm on unencrypted dataset
-    # predicted_ages = epigenetic_pacemaker.run_unencrypted_epm()
-    # mean_error = utils.mean_average_error(predicted_ages, my_mle.get_predicted_ages())
+    predicted_ages = epigenetic_pacemaker.createGraph(data_handler.NUMBER_OF_SITES, data_handler.NUMBER_OF_PEOPLE)
+    mean_error = utils.mean_error(predicted_ages, my_mle.get_predicted_ages())
 
-    # logging.info("Mean average error: " + str(mean_error))
+    logging.info("Mean average error: " + str(mean_error))
+
+

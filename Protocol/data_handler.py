@@ -7,8 +7,8 @@ from EpigeneticPacemaker.ExampleData.DataSets import get_example_data
 # CONSTANTS
 PRECISION = None
 MIN_COEFFICIENT = 0.90
-NUMBER_OF_SITES = 5
-NUMBER_OF_PEOPLE = 96
+NUMBER_OF_SITES = 20
+NUMBER_OF_PEOPLE = 200
 
 
 def combine_datasets(data_set1, data_set2) -> tuple[np.array, np.array, np.array, np.array]:

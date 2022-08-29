@@ -99,7 +99,7 @@ def pearson_correlation(meth_matrix: np.array, phenotype: np.array) -> np.array:
     return covariance / (variance_meth * variance_phenotype)
 
 
-def mean_average_error(set1: np.array, set2: np.array) -> float:
+def mean_error(set1: np.array, set2: np.array) -> float:
     return np.average(np.abs(set1 - set2))
 
 
@@ -108,8 +108,9 @@ def create_graph(x: np.array, y: np.array):
     plt.title("Epigenetic PaceMaker")
     plt.xlabel("Chronological ages")
     plt.ylabel("Epigenetic ages")
-    plt.xticks([tick for tick in range(-20, 100, 5)])
-    plt.yticks([tick for tick in range(-20, 100, 5)])
+    ticks = [tick for tick in range(-20, 100, 5)]
+    plt.xticks(ticks)
+    plt.yticks(ticks)
     plt.gca().xaxis.grid(True)
     plt.gca().yaxis.grid(True)
     plt.scatter(x, y, color="blue", s=5)

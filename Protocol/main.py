@@ -11,8 +11,8 @@ from time_step import time_step
 
 
 # CONSTANTS
-NUM_OF_OWNERS = 1
-NUM_OF_ITERATIONS = 2
+NUM_OF_OWNERS = 8
+NUM_OF_ITERATIONS = 4
 
 
 # ABSTRACT
@@ -107,7 +107,7 @@ if __name__ == '__main__':
     utils.create_graph(original_ages, my_mle.get_predicted_ages())
 
     # Run algorithm on unencrypted dataset
-    predicted_ages = epigenetic_pacemaker.run_unencrypted_epm()
-    mean_error = utils.mean_average_error(predicted_ages, my_mle.get_predicted_ages())
+    # predicted_ages = epigenetic_pacemaker.run_unencrypted_epm()
+    # mean_error = utils.mean_average_error(predicted_ages, my_mle.get_predicted_ages())
 
-    logging.info("Mean average error: " + str(mean_error))
+    # logging.info("Mean average error: " + str(mean_error))

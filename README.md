@@ -50,6 +50,19 @@ This project requires the installation of the following libraries, as well as nu
   ```
 
 
+<!-- USAGE -->
+## Usage
+
+The privacy-privacy-preserving protocol we've developed for the Epigenetic Pacemaker can be used by running the main.py script.
+The project contains the following modules:
+* csp: Initiates and handles the CSP class variables and methods
+* mle: Initiates and handles the MLE class variables and methods
+* data_handler: Handles partitioning, encryption of datasets
+* utilities: Methods and functions utilized in other modules
+* site_step: Site step phase of the protocol
+* time_step: Time step phase of the protocol
+* epigenetic_pacemaker: Runs the CEM-UPM algorithm using the closed-form algebraic solution on unencrypted datasets (not part of the privacy-preserving system)
+
 
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments

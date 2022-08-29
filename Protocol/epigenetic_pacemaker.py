@@ -1,25 +1,12 @@
 # import the data retrieval class
-from EpigeneticPacemaker.ExampleData.DataSets import get_example_data
-from typing import Dict, Tuple
-import numpy as np
 import scipy.stats
+import math
+import time
+import numpy as np
+import utilities as utils
 import matplotlib.pyplot as plt
 from scipy import stats
-import math
-# from scipy.stats import chi2_contingency
-import subprocess
-import numpy as np
-import time
-import utilities as utils
-
-
-# -------------------------------------------------------------------------unused
-# create S' entries for sites with high Pearson correaltion
-def Create_S_matrix(training_sites, test_methylation_values):
-    sites = []
-    for x in range(len(training_sites)):
-        sites.append(test_methylation_values[training_sites[x]])  # entry Si,j
-    return sites
+from EpigeneticPacemaker.ExampleData.DataSets import get_example_data
 
 
 # ----------------------------------------------------------------------------------------

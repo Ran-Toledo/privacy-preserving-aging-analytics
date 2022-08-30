@@ -7,7 +7,7 @@ from EpigeneticPacemaker.ExampleData.DataSets import get_example_data
 # CONSTANTS
 PRECISION = None
 MIN_COEFFICIENT = 0.90
-NUMBER_OF_SITES = 5
+NUMBER_OF_SITES = 15
 NUMBER_OF_PEOPLE = 500
 
 

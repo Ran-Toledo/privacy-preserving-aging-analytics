@@ -103,7 +103,7 @@ def mean_error(set1: np.array, set2: np.array) -> float:
     return np.average(np.abs(set1 - set2))
 
 
-def create_graph(x: np.array, y: np.array):
+def create_graph(x: np.array, y: np.array, color: str):
     logging.disable(logging.DEBUG)
     plt.title("Epigenetic PaceMaker")
     plt.xlabel("Chronological ages")
@@ -113,5 +113,5 @@ def create_graph(x: np.array, y: np.array):
     plt.yticks(ticks)
     plt.gca().xaxis.grid(True)
     plt.gca().yaxis.grid(True)
-    plt.scatter(x, y, color="blue", s=5)
+    plt.scatter(x, y, color=color, s=5)
     plt.show()

@@ -126,7 +126,7 @@ def calculate_rates_and_startStates(ages, sites):
 
 
 # calculate epigenetic ages by tj = ∑(i≤n)[ri*(si,j-s0i))]/∑(i≤n)[ri^2]
-def calcultae_eAges(S, s0i, ri):
+def calculate_ages(S, s0i, ri):
     denominator = 0
     for i in range(len(ri)):
         denominator += ri[i] * ri[i]
@@ -155,23 +155,23 @@ def EPM(S, y, tj, delta, n):
     m = 2
     # first iteration
     ri, s0i = calculate_rates_and_startStates(tj, y)
-    tj = calcultae_eAges(S, s0i, ri)
+    tj = calculate_ages(S, s0i, ri)
     RSS0 = calculateRSS(S, s0i, ri, tj)
     if (n == 1):
         return ri, s0i, tj, RSS0
     # second iteration
     ri, s0i = calculate_rates_and_startStates(tj, y)
     RSS1 = calculateRSS(S, s0i, ri, tj)
-    print("the difference is : %.16f" % (RSS0 - RSS1))
-    tj = calcultae_eAges(S, s0i, ri)
+
+    tj = calculate_ages(S, s0i, ri)
     # rest of iterations
     # while (RSS0 - RSS1 > delta and m < n):
     while (m < n):
         RSS0 = RSS1
         ri, s0i = calculate_rates_and_startStates(tj, y)
-        tj = calcultae_eAges(S, s0i, ri)
+        tj = calculate_ages(S, s0i, ri)
         RSS1 = calculateRSS(S, s0i, ri, tj)
-        print("the difference is : %.16f" % (RSS0 - RSS1))
+
         m += 1
     return ri, s0i, tj, RSS1, m
 
@@ -183,7 +183,7 @@ def EPM_naive(S, y, tj, delta, n):
     m = 2
     # first iteration
     ri, s0i = calculate_rates_and_startStates_Naive(tj, y, len(S))
-    tj = calcultae_eAges(S, s0i, ri)
+    tj = calculate_ages(S, s0i, ri)
     RSS0 = calculateRSS(S, s0i, ri, tj)
     if (n == 1):
         return ri, s0i, tj, RSS0
@@ -191,12 +191,12 @@ def EPM_naive(S, y, tj, delta, n):
     ri, s0i = calculate_rates_and_startStates_Naive(tj, y, len(S))
     RSS1 = calculateRSS(S, s0i, ri, tj)
     # print("the difference is : ", str(RSS0 - RSS1))
-    tj = calcultae_eAges(S, s0i, ri)
+    tj = calculate_ages(S, s0i, ri)
     # rest of iterations
     while ( m < n):
         RSS0 = RSS1
         ri, s0i = calculate_rates_and_startStates_Naive(tj, y, len(S))
-        tj = calcultae_eAges(S, s0i, ri)
+        tj = calculate_ages(S, s0i, ri)
         RSS1 = calculateRSS(S, s0i, ri, tj)
         #   print("the difference is : ", str(RSS0 - RSS1))
         m += 1
@@ -308,14 +308,13 @@ def createGraph(NUMBER_OF_SITES, NUMBER_OF_PEOPLE):
     sites = sites[:NUMBER_OF_SITES]
     ages = ages[:NUMBER_OF_PEOPLE]
     S = methylation_values[sites, :NUMBER_OF_PEOPLE]
-    print("number of sites is: ", str(len(sites)))
-    print("number of individuals is : ", str(len(ages)))
+
     # creat y vector :
     y = Create_Y_vector(S)
     # run EPM algorithm
     ri, s0i, tj, RSS, m = EPM(S, y, ages, 0.00000001, 4)
     #    print (m)
-    utils.create_graph(ages, tj)
+    utils.create_graph(ages, tj, "green")
 
     return tj
 

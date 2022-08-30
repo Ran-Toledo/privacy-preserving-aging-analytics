@@ -104,7 +104,7 @@ if __name__ == '__main__':
 
     # Print Results
     original_ages = [my_csp.decrypt(age) for age in my_mle.get_original_ages()]
-    utils.create_graph(original_ages, my_mle.get_predicted_ages())
+    utils.create_graph(original_ages, my_mle.get_predicted_ages(), "blue")
 
     # Run algorithm on unencrypted dataset
     predicted_ages = epigenetic_pacemaker.createGraph(data_handler.NUMBER_OF_SITES, data_handler.NUMBER_OF_PEOPLE)

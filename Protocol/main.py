@@ -99,7 +99,6 @@ if __name__ == '__main__':
     end_time = time.time()
 
     hours, minutes, seconds = utils.timer(start_time, end_time)
-    logging.info("Runtime: " + str(end_time - start_time))
     logging.info("Runtime: " + ("{:0>2}:{:0>2}:{:05.2f}".format(int(hours), int(minutes), seconds)))
 
     # Print Results
@@ -110,6 +109,6 @@ if __name__ == '__main__':
     predicted_ages = epigenetic_pacemaker.createGraph(data_handler.NUMBER_OF_SITES, data_handler.NUMBER_OF_PEOPLE)
     mean_error = utils.mean_error(predicted_ages, my_mle.get_predicted_ages())
 
-    logging.info("Mean average error: " + str(mean_error))
+    logging.info("Mean error: " + str(mean_error))
 
 

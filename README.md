@@ -36,10 +36,6 @@ In recent studies, it has been found that DNA methylation could be an accurate b
 
 This project requires the installation of the following libraries, as well as numpy, matplotlib, and scipy.
 
-* npm
-  ```sh
-  npm install npm@latest -g
-  ```
 * phe
   ```sh
   pip install phe
